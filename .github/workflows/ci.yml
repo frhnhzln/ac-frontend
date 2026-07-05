@@ -1,0 +1,27 @@
+name: Next.js CI Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm' # change to 'yarn' or 'pnpm' if you use those instead
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Production Build
+        run: npm run build
