@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -18,7 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm' # change to 'yarn' or 'pnpm' if you use those instead
+          cache: 'npm'
 
       - name: Install Dependencies
         run: npm ci
