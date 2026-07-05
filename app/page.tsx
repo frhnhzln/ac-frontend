@@ -1,11 +1,27 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+  const router = useRouter();
   const year = new Date().getFullYear();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // ✅ hardcoded login
+    localStorage.setItem("auth", "true");
+
+    // redirect to dashboard
+    router.push("/dashboard");
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-blue-100 flex items-center justify-center p-5">
       <div className="w-full max-w-md">
         {/* Card */}
         <div className="rounded-2xl bg-white shadow-2xl p-8 border border-gray-100">
+          
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <img
@@ -17,22 +33,21 @@ export default function Home() {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Welcome Admin</h1>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Welcome Admin
+            </h1>
             <p className="text-gray-500 mt-2">Sign in to LLA</p>
           </div>
 
           {/* Form */}
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={handleLogin}>
+            
             {/* Email */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
               </label>
               <input
-                id="email"
                 type="email"
                 placeholder="example@email.com"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
@@ -42,10 +57,7 @@ export default function Home() {
             {/* Password */}
             <div>
               <div className="flex justify-between mb-2">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium text-gray-700"
-                >
+                <label className="text-sm font-medium text-gray-700">
                   Password
                 </label>
                 <a href="#" className="text-sm text-blue-600 hover:underline">
@@ -54,7 +66,6 @@ export default function Home() {
               </div>
 
               <input
-                id="password"
                 type="password"
                 placeholder="••••••••"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
