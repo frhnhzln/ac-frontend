@@ -7,14 +7,15 @@ export default function Dashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    const auth = localStorage.getItem("auth");
-    if (!auth) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       router.push("/");
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("auth");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     router.push("/");
   };
 
