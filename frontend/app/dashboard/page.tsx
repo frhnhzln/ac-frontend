@@ -8,22 +8,36 @@ export default function Dashboard() {
   const router = useRouter();
 
   const [user, setUser] = useState<any>(null);
+  const [stats, setStats] = useState({
+    total_tasks: 0,
+    pending_tasks: 0,
+    completed_tasks: 0
+  });
 
   useEffect(() => {
+
     const token = localStorage.getItem("token");
 
-    if (!token) {
-      router.push("/");
-      return;
-    }
+      if (!token) {
+          router.push("/");
+          return;
+      }
 
-    const storedUser = localStorage.getItem("user");
+      const storedUser = localStorage.getItem("user");
+      if(storedUser){
+          setUser(JSON.parse(storedUser));
+      }
 
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-
-  }, [router]);
+      const fetchDashboard = async()=>{
+          try{
+              const res = await api.get("/dashboard");
+              setStats(res.data);
+          }catch(error){
+              console.log(error);
+          }
+      }
+      fetchDashboard();
+  },[router]);
 
 
   const handleLogout = async () => {
@@ -73,8 +87,12 @@ export default function Dashboard() {
             ✓
           </div>
           <h3 className="text-lg font-bold text-gray-800">
-            Tasks
+              Total Tasks
           </h3>
+
+          <p className="text-3xl font-bold text-blue-600 mt-2">
+              {stats.total_tasks}
+          </p>
           <p className="text-sm text-gray-500 mt-1">
             Manage ongoing and upcoming operations.
           </p>
