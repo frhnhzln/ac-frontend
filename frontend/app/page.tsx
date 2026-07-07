@@ -1,27 +1,63 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
   const year = new Date().getFullYear();
 
-  const handleLogin = (e: React.FormEvent) => {
+  // form state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    // ✅ hardcoded login
-    localStorage.setItem("auth", "true");
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    // redirect to dashboard
-    router.push("/dashboard");
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ store token (Sanctum style)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // redirect
+      router.push("/dashboard");
+
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
+    }
+
+    setLoading(false);
   };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-blue-100 flex items-center justify-center p-5">
       <div className="w-full max-w-md">
+
         {/* Card */}
         <div className="rounded-2xl bg-white shadow-2xl p-8 border border-gray-100">
-          
+
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <img
@@ -41,7 +77,7 @@ export default function Home() {
 
           {/* Form */}
           <form className="space-y-5" onSubmit={handleLogin}>
-            
+
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -50,6 +86,8 @@ export default function Home() {
               <input
                 type="email"
                 placeholder="example@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
               />
             </div>
@@ -68,6 +106,8 @@ export default function Home() {
               <input
                 type="password"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
               />
             </div>
@@ -83,9 +123,10 @@ export default function Home() {
             {/* Button */}
             <button
               type="submit"
-              className="w-full rounded-lg bg-blue-600 py-3 text-white font-semibold transition hover:bg-blue-700 active:scale-[0.98]"
+              disabled={loading}
+              className="w-full rounded-lg bg-blue-600 py-3 text-white font-semibold transition hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50"
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
@@ -105,7 +146,7 @@ export default function Home() {
           {/* Footer */}
           <p className="mt-8 text-center text-sm text-gray-500">
             Don't have an account?{" "}
-            <a href="#" className="font-semibold text-blue-600 hover:underline">
+            <a href="/signup" className="font-semibold text-blue-600 hover:underline">
               Register
             </a>
           </p>
