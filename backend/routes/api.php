@@ -12,15 +12,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-// PROTECTED ROUTES
-Route::middleware('auth:sanctum')->group(function () {
+Route::get('/tasks', [TaskController::class, 'index']);
+Route::post('/tasks', [TaskController::class, 'store']);
+Route::patch('/tasks/{id}/status', [TaskController::class, 'updateStatus']);
 
-    // TASKS
-    Route::get('/tasks', [TaskController::class, 'index']);
-    Route::post('/tasks', [TaskController::class, 'store']);
-    // Route::get('/tasks/me', [TaskController::class, 'myTasks']);
-    Route::patch('/tasks/{id}/status', [TaskController::class, 'updateStatus']);
-
-    // AUTH
-    Route::post('/logout', [AuthController::class, 'logout']);
-});
+// AUTH
+Route::post('/logout', [AuthController::class, 'logout']);

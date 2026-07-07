@@ -17,22 +17,24 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
-            'admin_id' => 'required',
-            'service_type' => 'required',
+            'customer_name' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'unit' => 'required',
             'description' => 'nullable',
-            'scheduled_date' => 'nullable|date',
+            'deal_time' => 'nullable',
+            'status' => 'nullable',
         ]);
 
         $task = Task::create([
-            'user_id' => $request->user_id,
-            'team_id' => $request->team_id,
-            'admin_id' => $request->admin_id,
-            'service_type' => $request->service_type,
+            'customer_name' => $request->customer_name,
+            'phone' => $request->phone,
+            'address' => $request->address,
             'unit' => $request->unit,
             'description' => $request->description,
-            'status' => 'pending',
-            'scheduled_date' => $request->scheduled_date,
+            'deal_time' => $request->deal_time,
+            'status' => $request->status ?? 'pending',
+            'scheduled_date' => now(),
         ]);
 
         return response()->json([
