@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import api from "@/lib/api";
 
 export default function Home() {
   const router = useRouter();
@@ -17,39 +18,47 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+
+      const response = await api.post("/login", {
+        email,
+        password,
       });
 
-      const data = await res.json();
+      const data = response.data;
 
-      if (!res.ok) {
-        alert(data.message || "Login failed");
-        setLoading(false);
-        return;
-      }
+      // store token
+      localStorage.setItem(
+        "token",
+        data.token
+      );
 
-      // ✅ store token (Sanctum style)
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
 
-      // redirect
       router.push("/dashboard");
 
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
-    }
+    } catch (error:any) {
 
-    setLoading(false);
+      console.error(error);
+
+      if(error.response){
+
+        alert(
+          error.response.data.message 
+          || "Login failed"
+        );
+
+      }else{
+
+        alert("Something went wrong");
+
+      }
+
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
