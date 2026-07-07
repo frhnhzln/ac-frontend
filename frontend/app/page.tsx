@@ -99,7 +99,7 @@ export default function Home() {
                 <label className="text-sm font-medium text-gray-700">
                   Password
                 </label>
-                <a href="#" className="text-sm text-blue-600 hover:underline">
+                <a href="/forgot-password" className="text-sm text-blue-600 hover:underline">
                   Forgot Password?
                 </a>
               </div>
