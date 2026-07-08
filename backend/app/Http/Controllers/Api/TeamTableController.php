@@ -11,7 +11,10 @@ class TeamTableController extends Controller
     // List all teams
     public function index()
     {
-        return TeamTable::with('members')->get();
+        return TeamTable::with([
+            'members',
+            'assignments.task'
+        ])->get();
     }
 
     // Create new team
@@ -35,7 +38,10 @@ class TeamTableController extends Controller
     // Show one team
     public function show($id)
     {
-        return TeamTable::with('members')->findOrFail($id);
+        return TeamTable::with([
+            'members',
+            'assignments.task'
+        ])->findOrFail($id);
     }
 
     // Update team

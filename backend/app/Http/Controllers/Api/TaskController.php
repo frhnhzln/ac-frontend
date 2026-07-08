@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Services\GeocodingService;
 use Illuminate\Http\Request;
+use App\Services\TaskAssignmentService;
 
 class TaskController extends Controller
 {
@@ -15,7 +16,7 @@ class TaskController extends Controller
     }
 
     // Create task
-    public function store(Request $request, GeocodingService $geocodingService)
+    public function store(Request $request, GeocodingService $geocodingService, TaskAssignmentService $assignmentService)
     {
         $request->validate([
             'customer_name' => 'required',
@@ -44,9 +45,12 @@ class TaskController extends Controller
             'longitude' => $location['lng'] ?? null,
         ]);
 
+        $assignment = $assignmentService->assignTask($task);
+
         return response()->json([
             'message' => 'Task created successfully',
             'task' => $task,
+            'assignment'=>$assignment
         ]);
     }
 

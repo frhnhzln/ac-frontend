@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\TaskAssignment;
 
 class TeamTable extends Model
 {
@@ -14,5 +15,13 @@ class TeamTable extends Model
     public function members()
     {
         return $this->hasMany(Team::class);
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(
+            TaskAssignment::class,
+            'team_id'
+        )->with('task');
     }
 }

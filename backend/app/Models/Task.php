@@ -20,4 +20,8 @@ class Task extends Model
         'longitude',
     ];
 
+    public function assignments()
+    {
+        return $this->hasMany(TaskAssignment::class);
+    }
 }
