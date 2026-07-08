@@ -21,6 +21,11 @@ export default function ConfigurationPage() {
   const [memberRole,setMemberRole] = useState("Technician");
   const [addingMember,setAddingMember] = useState(false);
 
+  const [search,setSearch] = useState("");
+
+  const filteredTeams = teams.filter(team =>
+    team.team_name.toLowerCase().includes(search.toLowerCase())
+    );
 
   useEffect(()=>{
     fetchTeams();
@@ -70,6 +75,16 @@ export default function ConfigurationPage() {
     }
   };
 
+  const deleteTeam = async(id:number)=>{
+    if(!confirm("Are you sure you want to delete this team?")) return;
+
+    try{
+        await api.delete(`/team-tables/${id}`);
+        fetchTeams();
+    }catch(error:any){
+        alert(error.response?.data?.message || "Failed deleting team");
+    }
+    };
 
   const addMember = async()=>{
 
@@ -125,12 +140,12 @@ export default function ConfigurationPage() {
             </p>
           </div>
 
-          <button
-            onClick={()=>setShowModal(true)}
-            className="rounded-xl bg-blue-600 px-5 py-3 text-white font-semibold hover:bg-blue-700"
-          >
-            + Create Team
-          </button>
+            <button
+                onClick={()=>setShowModal(true)}
+                className="rounded-xl bg-blue-600 px-5 py-3 text-white font-semibold hover:bg-blue-700"
+            >
+                + Create Team
+            </button>
         </div>
 
 
@@ -164,8 +179,10 @@ export default function ConfigurationPage() {
         <div className="bg-white rounded-2xl border shadow-sm p-5">
           <input
             placeholder="Search team..."
+            value={search}
+            onChange={e=>setSearch(e.target.value)}
             className="w-full rounded-xl border px-4 py-3"
-          />
+            />
         </div>
 
 
@@ -178,7 +195,7 @@ export default function ConfigurationPage() {
 
         <div className="grid lg:grid-cols-2 gap-6">
 
-        {teams.map(team=>(
+        {filteredTeams.map(team=>(
 
           <div key={team.id} className="bg-white rounded-2xl border shadow-sm p-6">
 
@@ -241,17 +258,24 @@ export default function ConfigurationPage() {
 
 
             <div className="mt-6 flex gap-3">
+                <button
+                    onClick={()=>{
+                    setSelectedTeamId(team.id);
+                    setShowMemberModal(true);
+                    }}
+                    className="flex-1 rounded-xl bg-blue-600 py-3 text-white font-semibold"
+                >
+                    + Add Member
+                </button>
 
-              <button
-                onClick={()=>{
-                  setSelectedTeamId(team.id);
-                  setShowMemberModal(true);
-                }}
-                className="flex-1 rounded-xl bg-blue-600 py-3 text-white font-semibold"
-              >
-                + Add Member
-              </button>
-            </div>
+                <button
+                    onClick={()=>deleteTeam(team.id)}
+                    className="flex-1 rounded-xl bg-red-600 py-3 text-white font-semibold hover:bg-red-700"
+                >
+                    Delete Team
+                </button>
+
+                </div>
 
           </div>
 
