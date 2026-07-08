@@ -7,13 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model
 {
     protected $fillable = [
+        'team_table_id',
         'name',
         'phone',
+        'role',
         'status'
     ];
 
-    public function tasks()
+    public function teamTable()
     {
-        return $this->hasMany(Task::class);
+        return $this->belongsTo(TeamTable::class);
     }
 }
