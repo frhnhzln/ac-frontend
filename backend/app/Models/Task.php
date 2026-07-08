@@ -16,6 +16,8 @@ class Task extends Model
         'status',
         'scheduled_date',
         'completed_at',
+        'latitude',
+        'longitude',
     ];
 
 }

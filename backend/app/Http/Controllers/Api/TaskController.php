@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
+use App\Services\GeocodingService;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -14,7 +15,7 @@ class TaskController extends Controller
     }
 
     // Create task
-    public function store(Request $request)
+    public function store(Request $request, GeocodingService $geocodingService)
     {
         $request->validate([
             'customer_name' => 'required',
@@ -26,6 +27,9 @@ class TaskController extends Controller
             'status' => 'nullable',
         ]);
 
+        // Get latitude & longitude from address
+        $location = $geocodingService->getCoordinates($request->address);
+
         $task = Task::create([
             'customer_name' => $request->customer_name,
             'phone' => $request->phone,
@@ -35,11 +39,14 @@ class TaskController extends Controller
             'deal_time' => $request->deal_time,
             'status' => $request->status ?? 'pending',
             'scheduled_date' => now(),
+
+            'latitude' => $location['lat'] ?? null,
+            'longitude' => $location['lng'] ?? null,
         ]);
 
         return response()->json([
             'message' => 'Task created successfully',
-            'task' => $task
+            'task' => $task,
         ]);
     }
 
