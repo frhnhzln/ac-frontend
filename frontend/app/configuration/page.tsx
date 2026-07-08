@@ -52,7 +52,6 @@ export default function ConfigurationPage() {
     }
 
     try{
-
       setCreating(true);
 
       await api.post("/team-tables",{
@@ -67,9 +66,7 @@ export default function ConfigurationPage() {
       fetchTeams();
 
     }catch(error:any){
-
       alert(error.response?.data?.message || "Failed creating team");
-
     }finally{
       setCreating(false);
     }
@@ -94,15 +91,12 @@ export default function ConfigurationPage() {
     }
 
     try{
-
       setAddingMember(true);
-
       await api.post(`/team-tables/${selectedTeamId}/members`,{
         name:memberName,
         phone:memberPhone,
         role:memberRole
       });
-
 
       setShowMemberModal(false);
 
@@ -113,17 +107,11 @@ export default function ConfigurationPage() {
       fetchTeams();
 
     }catch(error:any){
-
       alert(error.response?.data?.message || "Failed adding member");
-
     }finally{
-
       setAddingMember(false);
-
     }
-
   };
-
 
   return(
     <AdminLayoutWrapper>
@@ -148,33 +136,26 @@ export default function ConfigurationPage() {
             </button>
         </div>
 
-
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-
           <div className="bg-white rounded-2xl border shadow-sm p-6">
             <p className="text-gray-500 text-sm">Total Teams</p>
             <h2 className="text-3xl font-bold mt-2">{teams.length}</h2>
           </div>
-
           <div className="bg-white rounded-2xl border shadow-sm p-6">
             <p className="text-gray-500 text-sm">Technicians</p>
             <h2 className="text-3xl font-bold mt-2">
               {teams.reduce((t,team)=>t+team.members.length,0)}
             </h2>
           </div>
-
           <div className="bg-white rounded-2xl border shadow-sm p-6">
             <p className="text-gray-500 text-sm">Available</p>
             <h2 className="text-3xl font-bold mt-2 text-green-600">-</h2>
           </div>
-
           <div className="bg-white rounded-2xl border shadow-sm p-6">
             <p className="text-gray-500 text-sm">Assigned Today</p>
             <h2 className="text-3xl font-bold mt-2 text-blue-600">-</h2>
           </div>
-
         </div>
-
 
         <div className="bg-white rounded-2xl border shadow-sm p-5">
           <input
@@ -185,22 +166,16 @@ export default function ConfigurationPage() {
             />
         </div>
 
-
         {loading &&
           <div className="text-center py-10 text-gray-500">
             Loading teams...
           </div>
         }
 
-
         <div className="grid lg:grid-cols-2 gap-6">
-
         {filteredTeams.map(team=>(
-
           <div key={team.id} className="bg-white rounded-2xl border shadow-sm p-6">
-
             <div className="flex justify-between">
-
               <div>
                 <h2 className="text-xl font-bold">
                   {team.team_name}
@@ -214,12 +189,9 @@ export default function ConfigurationPage() {
               <span className="px-3 py-1 rounded-full text-xs bg-green-50 text-green-600">
                 Active
               </span>
-
             </div>
 
-
             <div className="mt-6">
-
               <div className="flex justify-between text-sm text-gray-500 mb-2">
                 <span>Members</span>
                 <span>{team.members.length}/5</span>
@@ -231,31 +203,21 @@ export default function ConfigurationPage() {
                   style={{width:`${(team.members.length/5)*100}%`}}
                 />
               </div>
-
             </div>
 
-
             <div className="mt-6 space-y-3">
-
               {team.members.map((member:any)=>(
-
                 <div key={member.id} className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
-
                   <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
                     {member.name.charAt(0)}
                   </div>
-
                   <div>
                     <p className="font-medium">{member.name}</p>
                     <p className="text-xs text-gray-500">{member.role}</p>
                   </div>
-
                 </div>
-
               ))}
-
             </div>
-
 
             <div className="mt-6 flex gap-3">
                 <button
@@ -267,32 +229,21 @@ export default function ConfigurationPage() {
                 >
                     + Add Member
                 </button>
-
                 <button
                     onClick={()=>deleteTeam(team.id)}
                     className="flex-1 rounded-xl bg-red-600 py-3 text-white font-semibold hover:bg-red-700"
                 >
                     Delete Team
                 </button>
-
                 </div>
-
           </div>
-
         ))}
-
         </div>
 
-
-
         {/* CREATE TEAM MODAL */}
-
         {showModal && (
-
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-
           <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-
             <h2 className="text-2xl font-bold mb-5">
               Create Team
             </h2>
@@ -311,45 +262,31 @@ export default function ConfigurationPage() {
               className="w-full border rounded-xl px-4 py-3"
             />
 
-
             <div className="flex gap-3 mt-6">
-
               <button
                 onClick={()=>setShowModal(false)}
                 className="flex-1 border rounded-xl py-3"
               >
                 Cancel
               </button>
-
               <button
                 onClick={createTeam}
                 className="flex-1 bg-blue-600 text-white rounded-xl py-3"
               >
                 {creating?"Creating...":"Create"}
               </button>
-
             </div>
-
           </div>
-
         </div>
-
         )}
 
-
-
         {/* ADD MEMBER MODAL */}
-
         {showMemberModal && (
-
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-
           <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-
             <h2 className="text-2xl font-bold mb-5">
               Add Member
             </h2>
-
 
             <input
               placeholder="Name"
@@ -365,7 +302,6 @@ export default function ConfigurationPage() {
               className="w-full border rounded-xl px-4 py-3 mb-3"
             />
 
-
             <select
               value={memberRole}
               onChange={e=>setMemberRole(e.target.value)}
@@ -376,35 +312,24 @@ export default function ConfigurationPage() {
               <option>Supervisor</option>
             </select>
 
-
             <div className="flex gap-3 mt-6">
-
               <button
                 onClick={()=>setShowMemberModal(false)}
                 className="flex-1 border rounded-xl py-3"
               >
                 Cancel
               </button>
-
               <button
                 onClick={addMember}
                 className="flex-1 bg-blue-600 text-white rounded-xl py-3"
               >
                 {addingMember?"Adding...":"Add"}
               </button>
-
             </div>
-
-
           </div>
-
         </div>
-
         )}
-
-
       </div>
-
     </AdminLayoutWrapper>
   );
 }
