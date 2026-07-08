@@ -21,6 +21,13 @@ export default function ConfigurationPage() {
   const [memberRole,setMemberRole] = useState("Technician");
   const [addingMember,setAddingMember] = useState(false);
 
+ const [showEditMemberModal,setShowEditMemberModal] = useState(false);
+ const [editingMemberId,setEditingMemberId] = useState<number|null>(null);
+ const [editMemberName,setEditMemberName] = useState("");
+ const [editMemberPhone,setEditMemberPhone] = useState("");
+ const [editMemberRole,setEditMemberRole] = useState("Technician");
+ const [updatingMember,setUpdatingMember] = useState(false);
+
   const [search,setSearch] = useState("");
 
   const filteredTeams = teams.filter(team =>
@@ -112,6 +119,65 @@ export default function ConfigurationPage() {
       setAddingMember(false);
     }
   };
+
+    const editMember = (member:any)=>{
+
+        setEditingMemberId(member.id);
+        setEditMemberName(member.name);
+        setEditMemberPhone(member.phone);
+        setEditMemberRole(member.role);
+
+        setShowEditMemberModal(true);
+    };
+
+
+    const updateMember = async()=>{
+        if(!editMemberName || !editMemberPhone){
+            alert("Please fill all fields");
+            return;
+        }
+        try{
+            setUpdatingMember(true);
+            await api.put(`/members/${editingMemberId}`,{
+            name:editMemberName,
+            phone:editMemberPhone,
+            role:editMemberRole
+            });
+
+            setShowEditMemberModal(false);
+
+            fetchTeams();
+        }catch(error:any){
+            alert(
+            error.response?.data?.message ||
+            "Failed updating member"
+            );
+        }finally{
+            setUpdatingMember(false);
+        }
+    };
+
+
+    const deleteMember = async(id:number)=>{
+
+    if(!confirm("Delete this member?")) return;
+
+    try{
+
+        await api.delete(`/members/${id}`);
+
+        fetchTeams();
+
+    }catch(error:any){
+
+        alert(
+        error.response?.data?.message ||
+        "Failed deleting member"
+        );
+
+    }
+
+    };
 
   return(
     <AdminLayoutWrapper>
@@ -207,16 +273,32 @@ export default function ConfigurationPage() {
 
             <div className="mt-6 space-y-3">
               {team.members.map((member:any)=>(
-                <div key={member.id} className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
-                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                    {member.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-medium">{member.name}</p>
-                    <p className="text-xs text-gray-500">{member.role}</p>
-                  </div>
+                <div
+                key={member.id}
+                className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                        {member.name.charAt(0)}
+                    </div>
+
+                    <div>
+                        <p className="font-medium">{member.name}</p>
+                        <p className="text-xs text-gray-500">{member.role}</p>
+                    </div>
                 </div>
-              ))}
+
+                <div className="flex gap-2">
+
+                    <button onClick={()=>editMember(member)} className="h-8 w-8 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200" title="Edit Member">
+                        ✏️
+                    </button>
+
+                    <button onClick={()=>deleteMember(member.id)} className="h-8 w-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200" title="Delete Member">
+                        🗑️
+                    </button>
+                </div>
+                </div>
+                ))}
             </div>
 
             <div className="mt-6 flex gap-3">
@@ -329,6 +411,26 @@ export default function ConfigurationPage() {
           </div>
         </div>
         )}
+
+        {showEditMemberModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+                    <h2 className="text-2xl font-bold mb-5">Edit Member</h2>
+                        <input placeholder="Name" value={editMemberName} onChange={e=>setEditMemberName(e.target.value)} className="w-full border rounded-xl px-4 py-3 mb-3"/>
+                        <input placeholder="Phone" value={editMemberPhone} onChange={e=>setEditMemberPhone(e.target.value)} className="w-full border rounded-xl px-4 py-3 mb-3"/>
+                        <select value={editMemberRole} onChange={e=>setEditMemberRole(e.target.value)} className="w-full border rounded-xl px-4 py-3">
+                            <option>Technician</option>
+                            <option>Leader</option>
+                            <option>Supervisor</option>
+                        </select>
+
+                    <div className="flex gap-3 mt-6">
+                        <button onClick={()=>setShowEditMemberModal(false)} className="flex-1 border rounded-xl py-3">Cancel</button>
+                        <button onClick={updateMember} className="flex-1 bg-blue-600 text-white rounded-xl py-3">{updatingMember ?"Saving..." : "Save"}</button>
+                    </div>
+                </div>
+            </div>
+            )}
       </div>
     </AdminLayoutWrapper>
   );
