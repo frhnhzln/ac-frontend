@@ -251,10 +251,6 @@ export default function ConfigurationPage() {
                   {team.description || "-"}
                 </p>
               </div>
-
-              <span className="px-3 py-1 rounded-full text-xs bg-green-50 text-green-600">
-                Active
-              </span>
             </div>
 
             <div className="mt-6">
