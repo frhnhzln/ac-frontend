@@ -40,6 +40,9 @@ export default function Sidebar() {
           <Link href="/team" className={getLinkClass("/team")}>
             Team
           </Link>
+          <Link href="/configuration" className={getLinkClass("/configuration")}>
+            Configuration
+          </Link>
         </nav>
       </div>
 
