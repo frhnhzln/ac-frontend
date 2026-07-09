@@ -107,6 +107,30 @@ export default function TasksPage() {
     }
   };
 
+  const cancelTask = async(id:number)=>{
+    if(!confirm("Cancel this task?")) return;
+    try{
+      const token=localStorage.getItem("token");
+      const res=await fetch(`http://localhost:8000/api/tasks/${id}/status`,{
+        method:"PATCH",
+        headers:{
+          "Content-Type":"application/json",
+          "Accept":"application/json",
+          "Authorization":`Bearer ${token}`
+        },
+        body:JSON.stringify({
+          status:"cancelled"
+        })
+      });
+      if(!res.ok){
+        throw new Error();
+      }
+      fetchTasks();
+    }catch(error){
+      alert("Failed cancelling task");
+    }
+  };
+
   return (
     <AdminLayoutWrapper>
       <div className="max-w-5xl mx-auto space-y-8">
@@ -138,8 +162,11 @@ export default function TasksPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${task.status==="completed" ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600"}`}>{task.status}</span>
+                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${task.status==="completed" ?"bg-emerald-50 text-emerald-600" :task.status==="cancelled" ?"bg-red-50 text-red-600" :"bg-blue-50 text-blue-600"}`}>{task.status}</span>
                     <p className="text-xs text-gray-400 mt-2">{task.deal_time}</p>
+                    {task.status==="pending" && (
+                      <button onClick={()=>cancelTask(task.id)} className="mt-3 px-3 py-1 rounded-lg bg-red-600 text-white text-xs hover:bg-red-700">Cancel</button>
+                    )}
                 </div>
             </div>
           ))}
