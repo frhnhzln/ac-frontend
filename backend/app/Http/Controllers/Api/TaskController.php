@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Services\GeocodingService;
 use Illuminate\Http\Request;
 use App\Services\TaskAssignmentService;
+use App\Models\TaskAssignment;
 
 class TaskController extends Controller
 {
@@ -75,6 +76,14 @@ class TaskController extends Controller
         }
 
         $task->save();
+
+        if ($request->status === 'cancelled') {
+            TaskAssignment::where('task_id', $task->id)
+                ->update([
+                    'status' => 'cancelled'
+                ]);
+            $task->save();
+        }
 
         return response()->json([
             'message' => 'Status updated',

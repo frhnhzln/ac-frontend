@@ -13,7 +13,13 @@ class TeamTableController extends Controller
     {
         return TeamTable::with([
             'members',
-            'assignments.task'
+            'assignments' => function($query){
+                $query->where('status', '!=', 'cancelled')
+                      ->whereHas('task', function($q){
+                          $q->where('status', '!=', 'cancelled');
+                      })
+                      ->with('task');
+            }
         ])->get();
     }
 
@@ -40,7 +46,13 @@ class TeamTableController extends Controller
     {
         return TeamTable::with([
             'members',
-            'assignments.task'
+            'assignments' => function($query){
+                $query->where('status', '!=', 'cancelled')
+                      ->whereHas('task', function($q){
+                          $q->where('status', '!=', 'cancelled');
+                      })
+                      ->with('task');
+            }
         ])->findOrFail($id);
     }
 
