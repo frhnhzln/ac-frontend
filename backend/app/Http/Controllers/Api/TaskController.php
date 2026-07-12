@@ -65,7 +65,7 @@ class TaskController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required'
+            'status' => 'required|in:pending,assigned,completed,cancelled',
         ]);
 
         $task = Task::findOrFail($id);
